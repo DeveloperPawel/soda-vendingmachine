@@ -14,7 +14,7 @@ namespace Player
 {
     public class PlayerPanel : Controller, IPlayerSOConsumer, IVendingConsumer
     {
-        [SerializeField] private PlayerSO playerSo;
+        [SerializeField] protected PlayerSO playerSo;
         [SerializeField] private TMP_Text coin_display;
         [SerializeField] private TMP_Text success_text;
         
@@ -36,12 +36,12 @@ namespace Player
             coin_display.text = playerSo.GetCoinAmount().ToString();
         }
 
-        public void Consume(PlayerCoinUpdateEvent playerCoinUpdateEvent)
+        public virtual void Consume(PlayerCoinUpdateEvent playerCoinUpdateEvent)
         {
             UpdateUI();
         }
 
-        public void Consume(PlayerCoinSuccessEvent playerCoinSuccessEvent)
+        public virtual void Consume(PlayerCoinSuccessEvent playerCoinSuccessEvent)
         {
             if (!playerCoinSuccessEvent.isSuccess)
             {
@@ -62,7 +62,7 @@ namespace Player
             });
         }
 
-        public void Consume(VendingMachineItemPurchaseEvent vendingMachineItemPurchaseEvent)
+        public virtual void Consume(VendingMachineItemPurchaseEvent vendingMachineItemPurchaseEvent)
         {
             playerSo.Consume(vendingMachineItemPurchaseEvent);
         }

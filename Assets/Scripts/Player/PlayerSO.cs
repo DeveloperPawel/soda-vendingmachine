@@ -9,11 +9,11 @@ namespace Player
     [CreateAssetMenu(fileName = "PlayerSO", menuName = "PlayerSO", order = 0)]
     public class PlayerSO : ScriptableObject, IProducer, IVendingConsumer
     {
-        [SerializeField] private int coin;
-        private UnityEvent<EventArgs> _event;
+        [SerializeField] protected int coin;
+        protected UnityEvent<EventArgs> _event;
         public UnityEvent<EventArgs> Event => _event;
 
-        private void Awake()
+        protected virtual void OnEnable()
         {
             _event = new UnityEvent<EventArgs>();
         }
@@ -23,7 +23,7 @@ namespace Player
             return coin;
         }
 
-        public void AddCoin(int amount)
+        private void AddCoin(int amount)
         {
             coin += amount;
             var updateCoinEvent = new PlayerCoinUpdateEvent
@@ -33,7 +33,7 @@ namespace Player
             _event.Invoke(updateCoinEvent);
         }
 
-        private void RemoveCoin(int amount)
+        protected void RemoveCoin(int amount)
         {
             if (!CanSpendCoin(amount))
             {
@@ -41,7 +41,7 @@ namespace Player
                 {
                     isSuccess = false
                 };
-                _event.Invoke(playerCoinSuccessEvent);
+                _event?.Invoke(playerCoinSuccessEvent);
                 return;
             }
 
@@ -50,20 +50,20 @@ namespace Player
             {
                 addamount = amount
             };
-            _event.Invoke(updateCoinEvent);
+            _event?.Invoke(updateCoinEvent);
             var SuccessEvent = new PlayerCoinSuccessEvent
             {
                 isSuccess = true
             };
-            _event.Invoke(SuccessEvent);
+            _event?.Invoke(SuccessEvent);
         }
 
-        private bool CanSpendCoin(int amount)
+        protected bool CanSpendCoin(int amount)
         {
             return coin - amount >= 0;
         }
 
-        public void Consume(VendingMachineItemPurchaseEvent vendingMachineItemPurchaseEvent)
+        public virtual void Consume(VendingMachineItemPurchaseEvent vendingMachineItemPurchaseEvent)
         {
             RemoveCoin(vendingMachineItemPurchaseEvent.amount);
         }

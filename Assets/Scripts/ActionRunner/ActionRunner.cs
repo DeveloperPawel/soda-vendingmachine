@@ -50,7 +50,7 @@ namespace ActionRunner
         public void AddAction(float time, Action action)
         {
             timer = Time.time;
-            // _timerActions.Add(time, action);
+            
             if (!_timerActions.TryAdd(time, action))
             {
                 return;

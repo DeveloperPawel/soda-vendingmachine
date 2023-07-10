@@ -11,8 +11,8 @@ namespace VendingMachine
 {
     public class VendingMachine : Controller, IPlayerSOConsumer
     {
-        [SerializeField] private List<VendingItemSO> vendingItems;
-        [SerializeField] private GameObject buttonPrefab;
+        [SerializeField] protected List<VendingItemSO> vendingItems;
+        [SerializeField] protected GameObject buttonPrefab;
         
         private State state;
 
@@ -24,6 +24,11 @@ namespace VendingMachine
         protected override void Start()
         {
             base.Start();
+            CreateButtons();
+        }
+
+        protected void CreateButtons()
+        {
             foreach (var vendingItem in vendingItems)
             {
                 GameObject buttonGO = Instantiate(buttonPrefab, this.transform);
@@ -69,13 +74,13 @@ namespace VendingMachine
             gameService.Consume(new VendingMachineItemPurchaseEvent{amount = price});
         }
 
-        public void Consume(PlayerCoinUpdateEvent playerCoinUpdateEvent)
+        public virtual void Consume(PlayerCoinUpdateEvent playerCoinUpdateEvent)
         {
             if (playerCoinUpdateEvent.addamount > 0) return;
             Debug.Log($"Vending Machine: recieved {playerCoinUpdateEvent.addamount}");
         }
 
-        public void Consume(PlayerCoinSuccessEvent playerCoinSuccessEvent)
+        public virtual void Consume(PlayerCoinSuccessEvent playerCoinSuccessEvent)
         {
             if (playerCoinSuccessEvent.isSuccess)
             {
